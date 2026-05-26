@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="一封给青青的生日信，藏着一点温柔的小谜题。"
+    />
+    <title>青青，生日快乐</title>
+    <link rel="preload" href="assets/cover-envelope.jpg" as="image" />
+    <link rel="prefetch" href="assets/mascot.jpg" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="false">
+      静音
+    </button>
+
+    <main class="app-shell">
+      <section class="cover-screen is-active" id="coverScreen" aria-label="生日信封">
+        <div class="ambient ambient-one"></div>
+        <div class="ambient ambient-two"></div>
+        <button class="envelope-button" id="openEnvelope" type="button">
+          <span class="envelope-frame">
+            <img
+              src="assets/cover-envelope.jpg"
+              width="1100"
+              height="733"
+              alt="一只温暖的生日信封"
+              decoding="async"
+              fetchpriority="high"
+            />
+          </span>
+          <span class="cover-title">给青青的一封生日信</span>
+          <span class="cover-hint">轻轻点开</span>
+        </button>
+      </section>
+
+      <section class="story-screen" id="storyScreen" aria-label="生日探索">
+        <div class="scene-grid">
+          <aside class="side-panel">
+            <img
+              class="mascot"
+              src="assets/mascot.jpg"
+              width="760"
+              height="1140"
+              alt="拿着礼物的动漫学生女孩插画"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="progress-card">
+              <p class="eyebrow">线索进度</p>
+              <div class="clue-meter" id="clueMeter" aria-label="线索收集进度">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <p class="progress-copy" id="progressCopy">
+                有 4 个小线索散在信纸旁边。
+              </p>
+            </div>
+          </aside>
+
+          <section class="letter-stage">
+            <div class="paper-card">
+              <p class="eyebrow">Birthday letter</p>
+              <h1>青青，生日快乐</h1>
+              <p>
+                今天这封信先不急着读完。它把祝福藏在几个小地方，像平时聊天里那些不经意的轻松片刻。
+              </p>
+              <p>
+                点一点周围的装饰，收齐线索后，就能打开最后那封正式的生日信。
+              </p>
+
+              <div class="puzzle-box" aria-label="生日密码区域">
+                <label for="passwordInput">最后的四位密码</label>
+                <div class="password-row">
+                  <input
+                    id="passwordInput"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="4"
+                    autocomplete="off"
+                    placeholder="----"
+                  />
+                  <button id="unlockButton" type="button">打开</button>
+                </div>
+                <p class="puzzle-message" id="puzzleMessage">
+                  线索会告诉你答案。它和今天有关。
+                </p>
+              </div>
+            </div>
+
+            <button class="clue clue-stamp" type="button" data-clue="0">
+              <span>邮戳</span>
+            </button>
+            <button class="clue clue-star" type="button" data-clue="1">
+              <span>星星</span>
+            </button>
+            <button class="clue clue-ribbon" type="button" data-clue="2">
+              <span>丝带</span>
+            </button>
+            <button class="clue clue-corner" type="button" data-clue="3">
+              <span>纸角</span>
+            </button>
+          </section>
+        </div>
+      </section>
+
+      <section class="final-screen" id="finalScreen" aria-label="最终生日信">
+        <div class="final-card">
+          <img
+            class="final-illustration"
+            src="assets/final-birthday.jpg"
+            width="1200"
+            height="658"
+            alt="蛋糕、信封和礼物组成的生日插画"
+            loading="lazy"
+            decoding="async"
+          />
+          <article class="final-letter">
+            <p class="eyebrow">给青青</p>
+            <h2>生日快乐，愿今天对你温柔一点</h2>
+            <p>
+              青青，生日快乐。
+            </p>
+            <p>
+              虽然我们只是隔着屏幕聊天的朋友，但还是想认真把今天变得特别一点。不是很夸张的惊喜，也不是很会说话的祝福，只是希望你点开它的时候，能感觉到：今天有人真诚地记得你。
+            </p>
+            <p>
+              愿你在新的一岁里，多一点轻松，多一点被理解，多一点刚好发生的小幸运。也愿那些偶尔让人烦恼的事情，都能慢慢变小，变成可以跨过去的一步。
+            </p>
+            <p>
+              希望这个小网站能像一盏小灯，让你看到时心情变好。生日快乐，愿你平安开心，慢慢成为自己喜欢的样子。
+            </p>
+          </article>
+
+          <section class="handwritten-slot">
+            <img
+              class="handwritten-image"
+              id="handwrittenImage"
+              alt="手写生日信照片"
+              loading="lazy"
+              decoding="async"
+              hidden
+            />
+            <div>
+              <p class="eyebrow">手写信</p>
+              <h3>这里会放一封更慢一点的信</h3>
+              <p>
+                有些话写在纸上会更认真。等手写信拍好后，它会出现在这里，作为这个小惊喜的最后一页。
+              </p>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
