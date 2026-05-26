@@ -8,9 +8,7 @@
       content="一封给青青的生日信，藏着一点温柔的小谜题。"
     />
     <title>青青，生日快乐</title>
-    <link rel="preload" href="assets/cover-envelope.jpg" as="image" />
-    <link rel="prefetch" href="assets/mascot.jpg" as="image" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260527" />
   </head>
   <body>
     <button class="back-nav" id="backButton" type="button" hidden>返回信封</button>
@@ -58,20 +56,24 @@
           <span class="cover-hint">点击打开信封</span>
         </button>
         <button class="clue scene-clue cover-postmark" type="button" data-clue="0" aria-label="邮戳线索">
-          <img src="assets/clue-postmark.png" width="240" height="240" alt="" />
+          <img src="assets/clue-postmark.webp" width="240" height="240" alt="" decoding="async" fetchpriority="high" />
           <span>邮戳</span>
         </button>
       </section>
 
       <section class="story-screen" id="storyScreen" aria-label="生日探索">
         <button class="clue scene-clue star-clue" type="button" data-clue="1" aria-label="星光线索">
-          <img src="assets/clue-star.png" width="220" height="220" alt="" />
+          <img src="assets/clue-star.webp" width="220" height="220" alt="" loading="lazy" decoding="async" />
           <span>星光</span>
         </button>
         <button class="clue scene-clue gift-clue" type="button" data-clue="2" aria-label="丝带线索">
-          <img src="assets/clue-gift-ribbon.png" width="260" height="260" alt="" />
+          <img src="assets/clue-gift-ribbon.webp" width="260" height="260" alt="" loading="lazy" decoding="async" />
           <span>丝带</span>
           <i aria-hidden="true"></i>
+        </button>
+        <button class="clue scene-clue balloon-clue" type="button" data-clue="3" aria-label="气球线索">
+          <img src="assets/clue-balloon.webp" width="260" height="260" alt="" loading="lazy" decoding="async" />
+          <span>气球</span>
         </button>
         <div class="scene-grid">
           <aside class="side-panel">
@@ -85,11 +87,8 @@
               decoding="async"
             />
             <div class="progress-card scroll-card">
-              <img class="scroll-art" src="assets/clue-scroll.png" width="360" height="360" alt="" />
-              <button class="clue scroll-corner" type="button" data-clue="3" aria-label="纸角线索">
-                <span>纸角</span>
-              </button>
-              <p class="eyebrow">线索进度</p>
+              <img class="scroll-art" src="assets/clue-scroll.webp" width="720" height="720" alt="" loading="lazy" decoding="async" />
+              <p class="eyebrow">寻找线索</p>
               <div class="clue-meter" id="clueMeter" aria-label="线索收集进度">
                 <span></span>
                 <span></span>
@@ -97,10 +96,18 @@
                 <span></span>
               </div>
               <p class="progress-copy" id="progressCopy">
-                四个小线索藏在信纸旁。它们不会直接说答案。
+                已经找到 0 / 4 个线索。
               </p>
-              <ul class="clue-log" id="clueLog" aria-label="已发现线索">
-                <li>请寻找：邮戳，星光，丝带，纸角。</li>
+              <p class="scroll-subtitle">请寻找线索</p>
+              <ul class="clue-targets" id="clueTargets" aria-label="待寻找线索">
+                <li data-clue-target="0"><span>邮戳</span><b>寻找中</b></li>
+                <li data-clue-target="1"><span>星光</span><b>寻找中</b></li>
+                <li data-clue-target="2"><span>丝带</span><b>寻找中</b></li>
+                <li data-clue-target="3"><span>气球</span><b>寻找中</b></li>
+              </ul>
+              <p class="scroll-subtitle">已获得提示</p>
+              <ul class="clue-log" id="clueLog" aria-label="已获得提示">
+                <li>还没有获得提示。</li>
               </ul>
             </div>
           </aside>
@@ -127,6 +134,7 @@
                   <span>耳语</span>
                   <span>柳枝</span>
                 </div>
+                <p class="token-note">这里是解谜用的口令信物，不是要在页面里找的线索。</p>
                 <div class="code-inputs" id="codeInputs" aria-label="四位开信口令">
                   <input type="text" inputmode="numeric" maxlength="1" aria-label="口令第 1 位" autocomplete="off" />
                   <input type="text" inputmode="numeric" maxlength="1" aria-label="口令第 2 位" autocomplete="off" />
@@ -195,9 +203,9 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <div class="letter-lightbox" id="letterLightbox" hidden>
       <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭手写信放大图">×</button>
-      <img src="letter.jpg" alt="放大的手写生日信照片" />
+      <img id="lightboxImage" alt="放大的手写生日信照片" />
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260527"></script>
   </body>
 </html>

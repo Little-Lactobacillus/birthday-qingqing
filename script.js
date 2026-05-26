@@ -13,6 +13,7 @@ const clueButtons = [...document.querySelectorAll(".clue")];
 const clueMeter = [...document.querySelectorAll("#clueMeter span")];
 const progressCopy = document.querySelector("#progressCopy");
 const clueLog = document.querySelector("#clueLog");
+const clueTargets = [...document.querySelectorAll("#clueTargets li")];
 const decoderPanel = document.querySelector("#decoderPanel");
 const codeInputs = [...document.querySelectorAll("#codeInputs input")];
 const resetPuzzle = document.querySelector("#resetPuzzle");
@@ -25,6 +26,7 @@ const toast = document.querySelector("#toast");
 const handwrittenImage = document.querySelector("#handwrittenImage");
 const letterLightbox = document.querySelector("#letterLightbox");
 const lightboxClose = document.querySelector("#lightboxClose");
+const lightboxImage = document.querySelector("#lightboxImage");
 
 const password = "0526";
 const foundClues = new Set();
@@ -32,7 +34,7 @@ const clueTexts = [
   "邮戳压着一张小纸条：圆月、午风、耳语、柳枝。顺序就按纸条从左到右。",
   "星光偏要捉迷藏：第一个信物别听声音，只看形状~。",
   "丝带轻轻晃：后面三个信物别看形，读一读声音，午、耳、柳会露出数字。",
-  "纸角把答案折起来：把四个信物换成阿拉伯数字，连起来就是开信口令。"
+  "气球把答案轻轻托起来：把四个信物换成阿拉伯数字，连起来就是开信口令。"
 ];
 
 let currentScreen = "cover";
@@ -113,14 +115,24 @@ function updateClues() {
   const count = foundClues.size;
   const ready = count === clueTexts.length;
   progressCopy.textContent = ready
-    ? "线索齐了。读纸条上的四个信物，写成四位口令。"
-    : `已经找到 ${count} / 4 个线索。点过的线索会留在这里。`;
+    ? "线索齐了。现在看下方口令信物。"
+    : `已经找到 ${count} / 4 个线索。`;
+
+  clueTargets.forEach((item) => {
+    const index = Number(item.dataset.clueTarget);
+    const found = foundClues.has(index);
+    item.classList.toggle("is-found", found);
+    const status = item.querySelector("b");
+    if (status) {
+      status.textContent = found ? "已找到" : "寻找中";
+    }
+  });
 
   if (clueLog) {
     const entries = [...foundClues].sort((a, b) => a - b);
     if (entries.length === 0) {
       const emptyItem = document.createElement("li");
-      emptyItem.textContent = "请寻找：邮戳，星光，丝带，纸角。";
+      emptyItem.textContent = "还没有获得提示。";
       clueLog.replaceChildren(emptyItem);
     } else {
       const clueItems = entries.map((index) => {
@@ -248,7 +260,7 @@ function openLetter() {
     return;
   }
 
-  playMusic();
+  window.setTimeout(playMusic, 850);
   openEnvelope.classList.add("is-opening");
   window.clearTimeout(openingTimer);
   openingTimer = window.setTimeout(() => {
@@ -272,6 +284,9 @@ function openLetterLightbox() {
     return;
   }
 
+  if (lightboxImage && !lightboxImage.src) {
+    lightboxImage.src = "letter.jpg";
+  }
   letterLightbox.hidden = false;
   document.body.classList.add("has-lightbox");
   lightboxClose?.focus();
