@@ -193,6 +193,8 @@ button:disabled {
   aspect-ratio: 1.48;
   overflow: hidden;
   border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 234, 200, 0.96) 0%, rgba(255, 208, 184, 0.96) 54%, rgba(239, 132, 123, 0.98) 100%);
   filter: drop-shadow(0 28px 42px rgba(81, 59, 63, 0.22));
   perspective: 900px;
 }
@@ -229,16 +231,18 @@ button:disabled {
 .envelope-body {
   border-radius: 8px;
   background:
+    radial-gradient(circle at 50% 62%, rgba(255, 235, 224, 0.34), transparent 0 11%, transparent 12%),
     linear-gradient(145deg, transparent 49.4%, rgba(255, 255, 255, 0.34) 50%, transparent 50.6%),
     linear-gradient(35deg, transparent 49.4%, rgba(255, 255, 255, 0.28) 50%, transparent 50.6%),
-    linear-gradient(180deg, #f8c1ad 0%, #ef887f 100%);
-  clip-path: polygon(0 26%, 50% 64%, 100% 26%, 100% 100%, 0 100%);
+    linear-gradient(180deg, #f7b2a1 0%, #ec8178 100%);
+  clip-path: polygon(0 24%, 50% 64%, 100% 24%, 100% 100%, 0 100%);
 }
 
 .envelope-flap {
   z-index: 2;
-  background: linear-gradient(180deg, #fff1d7 0%, #f8b99c 100%);
-  clip-path: polygon(0 0, 50% 62%, 100% 0);
+  background:
+    linear-gradient(180deg, rgba(255, 245, 222, 0.96) 0%, rgba(250, 184, 154, 0.98) 100%);
+  clip-path: polygon(0 0, 50% 64%, 100% 0);
   transform-origin: 50% 1%;
   transition: transform 720ms cubic-bezier(0.18, 0.84, 0.24, 1);
 }
@@ -247,12 +251,18 @@ button:disabled {
   position: absolute;
   z-index: 3;
   left: 50%;
-  top: 55%;
-  width: 54px;
-  height: 54px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 32% 24%, #ffd4c5, #ea786d);
-  box-shadow: 0 8px 18px rgba(81, 59, 63, 0.18);
+  top: 52%;
+  width: 76px;
+  height: 76px;
+  border-radius: 47% 53% 49% 51% / 52% 45% 55% 48%;
+  background:
+    radial-gradient(circle at 34% 24%, #ffd1c3 0 12%, transparent 13%),
+    radial-gradient(circle at 66% 70%, rgba(118, 28, 31, 0.22), transparent 34%),
+    linear-gradient(145deg, #f2897b 0%, #cc514a 74%, #a93636 100%);
+  box-shadow:
+    0 12px 22px rgba(100, 36, 39, 0.24),
+    inset 0 3px 7px rgba(255, 255, 255, 0.32),
+    inset 0 -10px 18px rgba(92, 24, 28, 0.25);
   transform: translate(-50%, -50%);
   transition:
     opacity 220ms ease,
@@ -260,14 +270,18 @@ button:disabled {
 }
 
 .envelope-seal::before {
-  content: "星";
+  content: "青";
+  position: absolute;
+  inset: 12px;
   display: grid;
   place-items: center;
-  width: 100%;
-  height: 100%;
+  border: 1px solid rgba(255, 246, 230, 0.68);
+  border-radius: 999px;
   color: rgba(255, 250, 241, 0.94);
   font-family: var(--title-font);
+  font-size: 26px;
   font-weight: 900;
+  box-shadow: inset 0 0 0 2px rgba(132, 38, 38, 0.16);
 }
 
 .envelope-button:hover .envelope-model,
@@ -390,6 +404,25 @@ button:disabled {
   line-height: 1.6;
 }
 
+.clue-log {
+  display: grid;
+  gap: 8px;
+  min-height: 94px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clue-log li {
+  padding: 9px 10px;
+  border: 1px solid rgba(54, 48, 68, 0.10);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(255, 253, 248, 0.72);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
 .letter-stage {
   min-height: 640px;
   display: grid;
@@ -455,56 +488,58 @@ button:disabled {
   font-size: clamp(24px, 4vw, 34px);
 }
 
-.answer-slots {
+.riddle-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin: 18px 0 14px;
 }
 
-.answer-slots span {
+.riddle-strip span {
   display: grid;
   place-items: center;
-  height: 54px;
-  border: 1px solid rgba(54, 48, 68, 0.18);
+  min-height: 52px;
+  padding: 8px;
+  border: 1px dashed rgba(54, 48, 68, 0.20);
   border-radius: var(--radius);
   color: var(--ink);
-  background: #fffdf8;
-  font-size: 26px;
+  background:
+    linear-gradient(rgba(255, 253, 248, 0.88), rgba(255, 253, 248, 0.88)),
+    repeating-linear-gradient(0deg, transparent 0 18px, rgba(54, 48, 68, 0.07) 19px);
+  font-family: var(--title-font);
+  font-size: clamp(18px, 3vw, 25px);
   font-weight: 900;
 }
 
-.answer-slots span::before {
-  content: "·";
-  color: rgba(54, 48, 68, 0.22);
-}
-
-.answer-slots span.is-filled::before {
-  content: "";
-}
-
-.digit-tray {
+.code-inputs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
-.digit-tray button {
-  height: 48px;
-  border: 0;
+.code-inputs input {
+  width: 100%;
+  height: 56px;
+  border: 1px solid rgba(54, 48, 68, 0.18);
   border-radius: var(--radius);
-  color: #fffdf8;
-  background: var(--ink);
-  font-size: 22px;
+  color: var(--ink);
+  background: #fffdf8;
+  text-align: center;
+  font-size: 26px;
   font-weight: 900;
   box-shadow: 0 10px 20px rgba(81, 59, 63, 0.14);
 }
 
-.digit-tray button:disabled,
+.code-inputs input:disabled,
 .primary-action:disabled,
 .secondary-action:disabled,
 .small-action:disabled {
   opacity: 0.42;
+}
+
+.code-inputs input:focus {
+  outline: 3px solid rgba(239, 188, 85, 0.36);
+  border-color: rgba(54, 48, 68, 0.36);
 }
 
 .decoder-actions {
@@ -568,8 +603,12 @@ button:disabled {
 }
 
 .clue.is-found {
-  filter: saturate(0.7);
-  opacity: 0.62;
+  filter: saturate(0.96);
+  opacity: 0.9;
+  box-shadow:
+    0 18px 34px rgba(81, 59, 63, 0.16),
+    0 0 0 4px rgba(255, 250, 241, 0.78),
+    0 0 0 7px rgba(239, 188, 85, 0.36);
 }
 
 .clue span {
@@ -648,6 +687,21 @@ button:disabled {
   border-radius: var(--radius);
   box-shadow: 0 14px 36px rgba(81, 59, 63, 0.14);
   background: #fffdf8;
+}
+
+.handwritten-letter {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  margin: 0 clamp(18px, 5vw, 52px) clamp(24px, 5vw, 52px);
+  padding: clamp(16px, 3vw, 28px);
+  border-style: solid;
+  background: rgba(255, 253, 248, 0.78);
+}
+
+.handwritten-letter .handwritten-image {
+  display: block;
+  width: min(100%, 720px);
+  max-height: none;
 }
 
 .handwritten-image[hidden] {

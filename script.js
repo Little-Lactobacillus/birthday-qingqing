@@ -12,9 +12,9 @@ const birthdayAudio = document.querySelector("#birthdayAudio");
 const clueButtons = [...document.querySelectorAll(".clue")];
 const clueMeter = [...document.querySelectorAll("#clueMeter span")];
 const progressCopy = document.querySelector("#progressCopy");
+const clueLog = document.querySelector("#clueLog");
 const decoderPanel = document.querySelector("#decoderPanel");
-const digitButtons = [...document.querySelectorAll("#digitTray button")];
-const answerSlots = [...document.querySelectorAll("#answerSlots span")];
+const codeInputs = [...document.querySelectorAll("#codeInputs input")];
 const resetPuzzle = document.querySelector("#resetPuzzle");
 const undoDigit = document.querySelector("#undoDigit");
 const unlockButton = document.querySelector("#unlockButton");
@@ -26,12 +26,11 @@ const handwrittenImage = document.querySelector("#handwrittenImage");
 
 const password = "0526";
 const foundClues = new Set();
-const selectedDigits = [];
 const clueTexts = [
-  "邮戳轻轻提醒：只收月和日，不收年份。",
-  "星光眨了一下：第五个月写在纸上，要补成两位。",
-  "丝带打了个结：日子是二十六，不是二和六的加法。",
-  "纸角露出一点点：月在前，日在后，像信封上的日期。"
+  "邮戳压着一张小纸条：圆月、午风、耳语、柳枝。顺序就按纸条从左到右。",
+  "星光偏要捉迷藏：第一个信物别听声音，只看形状，圆圆的一笔像空出来的 0。",
+  "丝带轻轻晃：后面三个信物别看形，读一读声音，午、耳、柳会露出数字。",
+  "纸角把答案折起来：把四个信物换成阿拉伯数字，连起来就是开信口令。"
 ];
 
 let currentScreen = "cover";
@@ -112,84 +111,106 @@ function updateClues() {
   const count = foundClues.size;
   const ready = count === clueTexts.length;
   progressCopy.textContent = ready
-    ? "线索齐了。现在把数字片排成邮戳日期。"
-    : `已经找到 ${count} / 4 个线索。线索要合起来看。`;
+    ? "线索齐了。读纸条上的四个信物，写成四位口令。"
+    : `已经找到 ${count} / 4 个线索。点过的线索会留在这里。`;
+
+  if (clueLog) {
+    const entries = [...foundClues].sort((a, b) => a - b);
+    if (entries.length === 0) {
+      const emptyItem = document.createElement("li");
+      emptyItem.textContent = "还没有翻到线索。";
+      clueLog.replaceChildren(emptyItem);
+    } else {
+      const clueItems = entries.map((index) => {
+        const item = document.createElement("li");
+        item.textContent = clueTexts[index];
+        return item;
+      });
+      clueLog.replaceChildren(...clueItems);
+    }
+  }
 
   decoderPanel.classList.toggle("is-locked", !ready);
-  digitButtons.forEach((button) => {
-    button.disabled = !ready;
+  codeInputs.forEach((input) => {
+    input.disabled = !ready;
   });
   unlockButton.disabled = !ready;
-  undoDigit.disabled = !ready || selectedDigits.length === 0;
-  resetPuzzle.disabled = !ready || selectedDigits.length === 0;
+  updateInputActions();
 
-  if (ready && selectedDigits.length === 0) {
-    puzzleMessage.textContent = "四块数字片都能用了。顺序像日期，不像算式。";
+  if (ready && getAttempt().length === 0) {
+    puzzleMessage.textContent = "四个信物都在纸条上了。第一个看形，后面三个听音。";
   }
 }
 
-function updateSlots() {
-  answerSlots.forEach((slot, index) => {
-    slot.textContent = selectedDigits[index] || "";
-    slot.classList.toggle("is-filled", Boolean(selectedDigits[index]));
-  });
+function getAttempt() {
+  return codeInputs.map((input) => input.value).join("");
+}
 
-  digitButtons.forEach((button) => {
-    const digit = button.dataset.digit;
-    const usedCount = selectedDigits.filter((value) => value === digit).length;
-    const availableCount = digitButtons.filter((item) => item.dataset.digit === digit).length;
-    button.disabled = foundClues.size < clueTexts.length || usedCount >= availableCount;
-  });
-
-  undoDigit.disabled = foundClues.size < clueTexts.length || selectedDigits.length === 0;
-  resetPuzzle.disabled = foundClues.size < clueTexts.length || selectedDigits.length === 0;
+function updateInputActions() {
+  const hasInput = codeInputs.some((input) => input.value);
+  const locked = foundClues.size < clueTexts.length;
+  undoDigit.disabled = locked || !hasInput;
+  resetPuzzle.disabled = locked || !hasInput;
 }
 
 function collectClue(button) {
   const index = Number(button.dataset.clue);
-  if (foundClues.has(index)) {
-    showToast("这个线索已经收好了。");
-    return;
+  const isNewClue = !foundClues.has(index);
+  if (isNewClue) {
+    foundClues.add(index);
+    button.classList.add("is-found");
+    updateClues();
   }
 
-  foundClues.add(index);
-  button.classList.add("is-found");
   showToast(clueTexts[index]);
-  updateClues();
-  updateSlots();
 }
 
-function addDigit(button) {
+function handleCodeInput(input, index) {
   if (foundClues.size < clueTexts.length) {
-    showToast("先把四个线索找齐，数字片才会醒。");
+    input.value = "";
+    showToast("先把四个线索找齐，口令格才会醒。");
     return;
   }
 
-  if (selectedDigits.length >= 4) {
-    puzzleMessage.textContent = "四格已经满了。可以退一格或重排。";
-    return;
-  }
+  input.value = input.value.replace(/\D/g, "").slice(-1);
+  updateInputActions();
 
-  selectedDigits.push(button.dataset.digit);
   puzzleMessage.textContent =
-    selectedDigits.length === 4
-      ? "邮戳已经拼好了。看看它像不像一个日期。"
-      : "继续放下一块数字片。";
-  updateSlots();
+    getAttempt().length === 4
+      ? "四位口令写好了。想想：圆的形、午耳柳的声音。"
+      : "继续写下一位口令。";
+
+  if (input.value && codeInputs[index + 1]) {
+    codeInputs[index + 1].focus();
+  }
 }
 
-function clearDigits() {
-  selectedDigits.splice(0, selectedDigits.length);
-  puzzleMessage.textContent = "重新排一次。线索说：月在前，日在后。";
-  updateSlots();
-  updateClues();
+function clearInputs() {
+  codeInputs.forEach((input) => {
+    input.value = "";
+  });
+  puzzleMessage.textContent = "重新写一次。第一个看形，后面三个听音。";
+  updateInputActions();
+  codeInputs[0]?.focus();
 }
 
-function removeLastDigit() {
-  selectedDigits.pop();
-  puzzleMessage.textContent = "退回一格。再想想日期的写法。";
-  updateSlots();
-  updateClues();
+function removeLastInput() {
+  let lastFilled = -1;
+  for (let index = codeInputs.length - 1; index >= 0; index -= 1) {
+    if (codeInputs[index].value) {
+      lastFilled = index;
+      break;
+    }
+  }
+
+  if (lastFilled < 0) {
+    return;
+  }
+
+  codeInputs[lastFilled].value = "";
+  codeInputs[lastFilled].focus();
+  puzzleMessage.textContent = "退回一格。再读读纸条上的信物。";
+  updateInputActions();
 }
 
 function unlockFinalLetter() {
@@ -199,14 +220,14 @@ function unlockFinalLetter() {
     return;
   }
 
-  if (selectedDigits.length < 4) {
-    puzzleMessage.textContent = "邮戳还缺数字片。";
+  const attempt = getAttempt();
+  if (attempt.length < 4) {
+    puzzleMessage.textContent = "口令还缺数字。";
     return;
   }
 
-  const attempt = selectedDigits.join("");
   if (attempt !== password) {
-    puzzleMessage.textContent = "还没对。顺序像日期，不像算式。";
+    puzzleMessage.textContent = "还没对。圆月看形，午风、耳语、柳枝听声音。";
     return;
   }
 
@@ -248,26 +269,40 @@ clueButtons.forEach((button) => {
   button.addEventListener("click", () => collectClue(button));
 });
 
-digitButtons.forEach((button) => {
-  button.addEventListener("click", () => addDigit(button));
+codeInputs.forEach((input, index) => {
+  input.addEventListener("input", () => handleCodeInput(input, index));
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Backspace" && !input.value && codeInputs[index - 1]) {
+      codeInputs[index - 1].focus();
+    }
+    if (event.key === "Enter") {
+      unlockFinalLetter();
+    }
+  });
+  input.addEventListener("paste", (event) => {
+    event.preventDefault();
+    const digits = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
+    digits.split("").forEach((digit, offset) => {
+      if (codeInputs[index + offset]) {
+        codeInputs[index + offset].value = digit;
+      }
+    });
+    updateInputActions();
+    puzzleMessage.textContent =
+      getAttempt().length === 4 ? "四位口令写好了。按下打开生日信试试。" : "继续写下一位口令。";
+  });
 });
 
-resetPuzzle.addEventListener("click", clearDigits);
-undoDigit.addEventListener("click", removeLastDigit);
+resetPuzzle.addEventListener("click", clearInputs);
+undoDigit.addEventListener("click", removeLastInput);
 unlockButton.addEventListener("click", unlockFinalLetter);
 
 if (handwrittenImage) {
-  handwrittenImage.addEventListener("load", () => {
-    const isPlaceholder =
-      handwrittenImage.naturalWidth <= 4 || handwrittenImage.naturalHeight <= 4;
-    handwrittenImage.hidden = isPlaceholder;
-  });
   handwrittenImage.addEventListener("error", () => {
     handwrittenImage.hidden = true;
   });
-  handwrittenImage.src = "assets/handwritten-letter.jpg";
 }
 
 updateMusicUi();
 updateClues();
-updateSlots();
+updateInputActions();

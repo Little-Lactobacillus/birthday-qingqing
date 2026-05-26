@@ -54,7 +54,7 @@
             />
           </span>
           <span class="cover-title">给青青的一封生日信</span>
-          <span class="cover-hint">轻轻点开，信会慢慢打开</span>
+          <span class="cover-hint">点击打开信封</span>
         </button>
       </section>
 
@@ -81,6 +81,9 @@
               <p class="progress-copy" id="progressCopy">
                 四个小线索藏在信纸旁。它们不会直接说答案。
               </p>
+              <ul class="clue-log" id="clueLog" aria-label="已发现线索">
+                <li>还没有翻到线索。</li>
+              </ul>
             </div>
           </aside>
 
@@ -89,10 +92,10 @@
               <p class="eyebrow">Birthday puzzle</p>
               <h1>青青，生日快乐</h1>
               <p>
-                这封信把最后的邮戳密码拆散了。先找齐四个小线索，再把数字片排成一个像日期的顺序。
+                这封信把最后的邮戳藏进了四个小信物里。先找齐四个线索，再把它们读成四位口令。
               </p>
               <p>
-                线索都很轻，不会直接告诉答案。慢慢看，答案其实就藏在今天。
+                线索可以反复点开看。它们要合起来用，不会单独把答案说出来。
               </p>
 
               <div class="decoder-panel is-locked" id="decoderPanel" aria-label="邮戳解码器">
@@ -101,19 +104,19 @@
                     <p class="eyebrow">Postmark decoder</p>
                     <h2>邮戳解码器</h2>
                   </div>
-                  <button class="small-action" id="resetPuzzle" type="button">重排</button>
+                  <button class="small-action" id="resetPuzzle" type="button">清空</button>
                 </div>
-                <div class="answer-slots" id="answerSlots" aria-label="已选择的密码">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                <div class="riddle-strip" aria-label="口令信物">
+                  <span>圆月</span>
+                  <span>午风</span>
+                  <span>耳语</span>
+                  <span>柳枝</span>
                 </div>
-                <div class="digit-tray" id="digitTray" aria-label="数字片">
-                  <button type="button" data-digit="2">2</button>
-                  <button type="button" data-digit="5">5</button>
-                  <button type="button" data-digit="0">0</button>
-                  <button type="button" data-digit="6">6</button>
+                <div class="code-inputs" id="codeInputs" aria-label="四位开信口令">
+                  <input type="text" inputmode="numeric" maxlength="1" aria-label="口令第 1 位" autocomplete="off" />
+                  <input type="text" inputmode="numeric" maxlength="1" aria-label="口令第 2 位" autocomplete="off" />
+                  <input type="text" inputmode="numeric" maxlength="1" aria-label="口令第 3 位" autocomplete="off" />
+                  <input type="text" inputmode="numeric" maxlength="1" aria-label="口令第 4 位" autocomplete="off" />
                 </div>
                 <div class="decoder-actions">
                   <button class="secondary-action" id="undoDigit" type="button">退一格</button>
@@ -171,22 +174,15 @@
             </div>
           </article>
 
-          <section class="handwritten-slot">
+          <section class="handwritten-slot handwritten-letter" aria-label="手写信">
             <img
               class="handwritten-image"
               id="handwrittenImage"
+              src="letter.jpg"
               alt="手写生日信照片"
               loading="lazy"
               decoding="async"
-              hidden
             />
-            <div>
-              <p class="eyebrow">手写信</p>
-              <h3>这里会放一封更慢一点的信</h3>
-              <p>
-                有些话写在纸上会更认真。等手写信拍好后，它会出现在这里，作为这个小惊喜的最后一页。
-              </p>
-            </div>
           </section>
         </div>
       </section>
