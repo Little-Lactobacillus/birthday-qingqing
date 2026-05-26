@@ -91,20 +91,35 @@ button:disabled {
 }
 
 .record-disc {
+  position: relative;
   display: grid;
   place-items: center;
   width: 46px;
   height: 46px;
   border-radius: 999px;
   overflow: hidden;
-  box-shadow: inset 0 0 0 2px rgba(54, 48, 68, 0.08);
+  background:
+    radial-gradient(circle at 50% 50%, #f6b8ad 0 13%, #fffaf1 14% 18%, transparent 19%),
+    repeating-radial-gradient(circle at 50% 50%, #221d2d 0 4px, #363044 5px 8px);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 250, 241, 0.28),
+    inset 0 0 0 12px rgba(0, 0, 0, 0.05);
 }
 
-.record-disc img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 999px;
+.record-groove {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(255, 250, 241, 0.22);
+  border-radius: inherit;
+}
+
+.record-label {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: inherit;
+  background: var(--gold);
+  box-shadow: inset 0 0 0 4px rgba(255, 250, 241, 0.72);
 }
 
 .music-player.is-playing .record-disc {
@@ -175,6 +190,7 @@ button:disabled {
 }
 
 .envelope-button {
+  position: relative;
   width: min(680px, 92vw);
   border: 0;
   color: inherit;
@@ -184,6 +200,53 @@ button:disabled {
   justify-items: center;
   text-align: center;
   padding: 0;
+}
+
+.scene-clue {
+  position: absolute;
+  z-index: 4;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: 0;
+}
+
+.scene-clue img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 14px 24px rgba(81, 59, 63, 0.18));
+}
+
+.scene-clue span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.cover-postmark {
+  left: calc(50% + 76px);
+  top: calc(50% - 130px);
+  width: clamp(74px, 12vw, 112px);
+  transform: rotate(-10deg);
+}
+
+.cover-postmark:hover,
+.cover-postmark:focus-visible,
+.star-clue:hover,
+.star-clue:focus-visible,
+.gift-clue:hover,
+.gift-clue:focus-visible {
+  transform: translateY(-4px) scale(1.04);
+}
+
+.cover-postmark:hover,
+.cover-postmark:focus-visible {
+  transform: rotate(-10deg) translateY(-4px) scale(1.04);
 }
 
 .envelope-model {
@@ -331,6 +394,40 @@ button:disabled {
   padding-top: 92px;
 }
 
+.story-screen {
+  overflow: hidden;
+}
+
+.star-clue {
+  top: 108px;
+  right: min(8vw, 90px);
+  width: clamp(76px, 10vw, 128px);
+  animation: star-float 4.4s ease-in-out infinite;
+}
+
+.gift-clue {
+  right: min(7vw, 78px);
+  bottom: 48px;
+  width: clamp(118px, 15vw, 184px);
+}
+
+.gift-clue i {
+  position: absolute;
+  inset: -28px;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 18% 32%, var(--gold) 0 4px, transparent 5px),
+    radial-gradient(circle at 78% 24%, var(--coral) 0 5px, transparent 6px),
+    radial-gradient(circle at 62% 76%, var(--mint) 0 4px, transparent 5px),
+    radial-gradient(circle at 34% 72%, var(--lavender) 0 5px, transparent 6px),
+    radial-gradient(circle at 52% 16%, #fffdf8 0 4px, transparent 5px);
+}
+
+.gift-clue.is-bursting i {
+  animation: confetti-burst 720ms ease-out;
+}
+
 .scene-grid {
   width: min(1120px, 100%);
   margin: 0 auto;
@@ -369,6 +466,58 @@ button:disabled {
 
 .progress-card {
   padding: 18px;
+}
+
+.scroll-card {
+  position: relative;
+  min-height: 360px;
+  padding: 72px 48px 62px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  overflow: visible;
+}
+
+.scroll-card > :not(.scroll-art) {
+  position: relative;
+  z-index: 1;
+}
+
+.scroll-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  filter: drop-shadow(0 22px 38px rgba(81, 59, 63, 0.18));
+}
+
+.scroll-corner {
+  position: absolute;
+  z-index: 2;
+  top: 62px;
+  right: 44px;
+  width: 54px;
+  height: 54px;
+  border: 0;
+  border-radius: 6px 14px 6px 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 241, 0.22) 0 46%, rgba(168, 121, 67, 0.28) 47% 52%, #f2d29c 53% 100%);
+  box-shadow: 0 8px 16px rgba(81, 59, 63, 0.14);
+  transform: rotate(5deg);
+}
+
+.scroll-corner span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #8c6040;
+  font-size: 13px;
+  font-weight: 900;
 }
 
 .eyebrow {
@@ -421,6 +570,20 @@ button:disabled {
   background: rgba(255, 253, 248, 0.72);
   font-size: 13px;
   line-height: 1.55;
+}
+
+.scroll-card .clue-log {
+  min-height: 136px;
+  margin-top: 12px;
+}
+
+.scroll-card .clue-log li {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 4px 0;
+  color: #6c4f45;
+  font-size: 13px;
 }
 
 .letter-stage {
@@ -584,13 +747,7 @@ button:disabled {
 }
 
 .clue {
-  order: 1;
-  width: 96px;
-  height: 96px;
   border: 0;
-  border-radius: 999px;
-  color: #fffdf8;
-  box-shadow: 0 18px 34px rgba(81, 59, 63, 0.18);
   transition:
     transform 180ms ease,
     filter 180ms ease,
@@ -599,40 +756,11 @@ button:disabled {
 
 .clue:hover,
 .clue:focus-visible {
-  transform: translateY(-4px) scale(1.04);
+  filter: brightness(1.04) saturate(1.05);
 }
 
 .clue.is-found {
-  filter: saturate(0.96);
-  opacity: 0.9;
-  box-shadow:
-    0 18px 34px rgba(81, 59, 63, 0.16),
-    0 0 0 4px rgba(255, 250, 241, 0.78),
-    0 0 0 7px rgba(239, 188, 85, 0.36);
-}
-
-.clue span {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  font-weight: 900;
-}
-
-.clue-stamp {
-  background: var(--sky);
-}
-
-.clue-star {
-  background: var(--gold);
-}
-
-.clue-ribbon {
-  background: var(--coral);
-}
-
-.clue-corner {
-  background: var(--mint);
+  filter: drop-shadow(0 0 10px rgba(239, 188, 85, 0.72)) saturate(1.04);
 }
 
 .final-screen {
@@ -702,6 +830,7 @@ button:disabled {
   display: block;
   width: min(100%, 720px);
   max-height: none;
+  cursor: zoom-in;
 }
 
 .handwritten-image[hidden] {
@@ -738,12 +867,80 @@ button:disabled {
   transform: translate(-50%, 0);
 }
 
+.has-lightbox {
+  overflow: hidden;
+}
+
+.letter-lightbox {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 58px 18px 24px;
+  background: rgba(24, 20, 32, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.letter-lightbox[hidden] {
+  display: none;
+}
+
+.letter-lightbox img {
+  display: block;
+  width: min(92vw, 880px);
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.36);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 250, 241, 0.38);
+  border-radius: 999px;
+  color: #fffdf8;
+  background: rgba(54, 48, 68, 0.72);
+  font-size: 28px;
+  line-height: 1;
+}
+
 @keyframes spin-record {
   from {
     transform: rotate(0);
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes star-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(4deg);
+  }
+}
+
+@keyframes confetti-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.45);
+  }
+  28% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.42) rotate(16deg);
   }
 }
 
@@ -761,6 +958,21 @@ button:disabled {
   .side-panel {
     grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
     align-items: end;
+  }
+
+  .scroll-card {
+    min-height: 310px;
+    padding: 62px 38px 52px;
+  }
+
+  .star-clue {
+    top: 86px;
+    right: 22px;
+  }
+
+  .gift-clue {
+    right: 20px;
+    bottom: 20px;
   }
 
   .mascot {
@@ -823,8 +1035,19 @@ button:disabled {
     width: min(340px, 84vw);
   }
 
+  .cover-postmark {
+    left: calc(50% + 44px);
+    top: calc(50% - 114px);
+    width: 76px;
+  }
+
   .side-panel {
     grid-template-columns: 1fr;
+  }
+
+  .scroll-card {
+    width: min(340px, 100%);
+    justify-self: center;
   }
 
   .mascot {
@@ -838,6 +1061,20 @@ button:disabled {
 
   .letter-stage {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .star-clue {
+    top: 78px;
+    width: 72px;
+  }
+
+  .gift-clue {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: 132px;
+    justify-self: center;
+    margin: 8px auto -4px;
   }
 
   .decoder-heading,
@@ -854,6 +1091,10 @@ button:disabled {
 
   .handwritten-slot {
     grid-template-columns: 1fr;
+  }
+
+  .letter-lightbox {
+    padding-inline: 10px;
   }
 
   .toast {

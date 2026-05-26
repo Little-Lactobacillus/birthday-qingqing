@@ -23,7 +23,8 @@
       title="播放中，点击静音"
     >
       <span class="record-disc" aria-hidden="true">
-        <img src="assets/record-player.jpg" width="180" height="180" alt="" />
+        <span class="record-groove"></span>
+        <span class="record-label"></span>
       </span>
       <span class="player-copy" id="playerCopy">播放中，点击静音</span>
     </button>
@@ -56,9 +57,22 @@
           <span class="cover-title">给青青的一封生日信</span>
           <span class="cover-hint">点击打开信封</span>
         </button>
+        <button class="clue scene-clue cover-postmark" type="button" data-clue="0" aria-label="邮戳线索">
+          <img src="assets/clue-postmark.png" width="240" height="240" alt="" />
+          <span>邮戳</span>
+        </button>
       </section>
 
       <section class="story-screen" id="storyScreen" aria-label="生日探索">
+        <button class="clue scene-clue star-clue" type="button" data-clue="1" aria-label="星光线索">
+          <img src="assets/clue-star.png" width="220" height="220" alt="" />
+          <span>星光</span>
+        </button>
+        <button class="clue scene-clue gift-clue" type="button" data-clue="2" aria-label="丝带线索">
+          <img src="assets/clue-gift-ribbon.png" width="260" height="260" alt="" />
+          <span>丝带</span>
+          <i aria-hidden="true"></i>
+        </button>
         <div class="scene-grid">
           <aside class="side-panel">
             <img
@@ -70,7 +84,11 @@
               loading="lazy"
               decoding="async"
             />
-            <div class="progress-card">
+            <div class="progress-card scroll-card">
+              <img class="scroll-art" src="assets/clue-scroll.png" width="360" height="360" alt="" />
+              <button class="clue scroll-corner" type="button" data-clue="3" aria-label="纸角线索">
+                <span>纸角</span>
+              </button>
               <p class="eyebrow">线索进度</p>
               <div class="clue-meter" id="clueMeter" aria-label="线索收集进度">
                 <span></span>
@@ -82,7 +100,7 @@
                 四个小线索藏在信纸旁。它们不会直接说答案。
               </p>
               <ul class="clue-log" id="clueLog" aria-label="已发现线索">
-                <li>还没有翻到线索。</li>
+                <li>请寻找：邮戳，星光，丝带，纸角。</li>
               </ul>
             </div>
           </aside>
@@ -93,9 +111,6 @@
               <h1>青青，生日快乐</h1>
               <p>
                 这封信把最后的邮戳藏进了四个小信物里。先找齐四个线索，再把它们读成四位口令。
-              </p>
-              <p>
-                线索可以反复点开看。它们要合起来用，不会单独把答案说出来。
               </p>
 
               <div class="decoder-panel is-locked" id="decoderPanel" aria-label="邮戳解码器">
@@ -128,18 +143,6 @@
               </div>
             </div>
 
-            <button class="clue clue-stamp" type="button" data-clue="0">
-              <span>邮戳</span>
-            </button>
-            <button class="clue clue-star" type="button" data-clue="1">
-              <span>星光</span>
-            </button>
-            <button class="clue clue-ribbon" type="button" data-clue="2">
-              <span>丝带</span>
-            </button>
-            <button class="clue clue-corner" type="button" data-clue="3">
-              <span>纸角</span>
-            </button>
           </section>
         </div>
       </section>
@@ -180,6 +183,7 @@
               id="handwrittenImage"
               src="letter.jpg"
               alt="手写生日信照片"
+              tabindex="0"
               loading="lazy"
               decoding="async"
             />
@@ -189,6 +193,10 @@
     </main>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="letter-lightbox" id="letterLightbox" hidden>
+      <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭手写信放大图">×</button>
+      <img src="letter.jpg" alt="放大的手写生日信照片" />
+    </div>
 
     <script src="script.js"></script>
   </body>
