@@ -1,31 +1,43 @@
-const coverScreen = document.querySelector("#coverScreen");
-const storyScreen = document.querySelector("#storyScreen");
-const finalScreen = document.querySelector("#finalScreen");
+const screens = {
+  cover: document.querySelector("#coverScreen"),
+  story: document.querySelector("#storyScreen"),
+  final: document.querySelector("#finalScreen")
+};
+
 const openEnvelope = document.querySelector("#openEnvelope");
-const soundToggle = document.querySelector("#soundToggle");
+const backButton = document.querySelector("#backButton");
+const musicPlayer = document.querySelector("#musicPlayer");
+const playerCopy = document.querySelector("#playerCopy");
+const birthdayAudio = document.querySelector("#birthdayAudio");
 const clueButtons = [...document.querySelectorAll(".clue")];
 const clueMeter = [...document.querySelectorAll("#clueMeter span")];
 const progressCopy = document.querySelector("#progressCopy");
-const passwordInput = document.querySelector("#passwordInput");
+const decoderPanel = document.querySelector("#decoderPanel");
+const digitButtons = [...document.querySelectorAll("#digitTray button")];
+const answerSlots = [...document.querySelectorAll("#answerSlots span")];
+const resetPuzzle = document.querySelector("#resetPuzzle");
+const undoDigit = document.querySelector("#undoDigit");
 const unlockButton = document.querySelector("#unlockButton");
 const puzzleMessage = document.querySelector("#puzzleMessage");
+const backToPuzzle = document.querySelector("#backToPuzzle");
+const backToCover = document.querySelector("#backToCover");
 const toast = document.querySelector("#toast");
 const handwrittenImage = document.querySelector("#handwrittenImage");
 
 const password = "0526";
 const foundClues = new Set();
+const selectedDigits = [];
 const clueTexts = [
-  "邮戳写着：五月的小信，今天送达。",
-  "星星说：答案有四位，前两位是 05。",
-  "丝带悄悄打了个结：后两位是 26。",
-  "纸角露出一句话：把今天写成 0526。"
+  "邮戳轻轻提醒：只收月和日，不收年份。",
+  "星光眨了一下：第五个月写在纸上，要补成两位。",
+  "丝带打了个结：日子是二十六，不是二和六的加法。",
+  "纸角露出一点点：月在前，日在后，像信封上的日期。"
 ];
 
-let audioContext;
-let masterGain;
-let melodyTimer;
-let muted = false;
+let currentScreen = "cover";
 let toastTimer;
+let openingTimer;
+let wantsMusic = true;
 
 function showToast(message) {
   window.clearTimeout(toastTimer);
@@ -33,82 +45,63 @@ function showToast(message) {
   toast.classList.add("is-visible");
   toastTimer = window.setTimeout(() => {
     toast.classList.remove("is-visible");
-  }, 2900);
+  }, 3200);
 }
 
-function setScreen(nextScreen) {
-  [coverScreen, storyScreen, finalScreen].forEach((screen) => {
-    screen.classList.toggle("is-active", screen === nextScreen);
+function setScreen(name) {
+  currentScreen = name;
+  Object.entries(screens).forEach(([screenName, screen]) => {
+    screen.classList.toggle("is-active", screenName === name);
+  });
+
+  backButton.hidden = name === "cover";
+  backButton.textContent = name === "final" ? "返回解谜" : "返回信封";
+  if (name === "final") {
+    window.clearTimeout(toastTimer);
+    toast.classList.remove("is-visible");
+  }
+  window.scrollTo(0, 0);
+}
+
+function updateMusicUi() {
+  const playing = wantsMusic;
+  musicPlayer.classList.toggle("is-playing", playing);
+  musicPlayer.classList.toggle("is-muted", !playing);
+  musicPlayer.setAttribute("aria-pressed", String(!playing));
+  musicPlayer.setAttribute(
+    "aria-label",
+    playing ? "播放中，点击静音" : "已静音，点击播放"
+  );
+  musicPlayer.title = playing ? "播放中，点击静音" : "已静音，点击播放";
+  playerCopy.textContent = playing ? "播放中，点击静音" : "已静音，点击播放";
+}
+
+function playMusic() {
+  if (!birthdayAudio || !wantsMusic) {
+    return;
+  }
+
+  birthdayAudio.volume = 0.56;
+  birthdayAudio.muted = false;
+  birthdayAudio.play().catch(() => {
+    // Browsers may block autoplay until the first deliberate interaction.
   });
 }
 
-function ensureAudio() {
-  if (audioContext) {
-    if (audioContext.state === "suspended") {
-      audioContext.resume();
-    }
-    return;
+function pauseMusic() {
+  if (birthdayAudio) {
+    birthdayAudio.pause();
   }
-
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContextClass) {
-    soundToggle.hidden = true;
-    return;
-  }
-
-  audioContext = new AudioContextClass();
-  masterGain = audioContext.createGain();
-  masterGain.gain.value = muted ? 0 : 0.08;
-  masterGain.connect(audioContext.destination);
-  startMelody();
 }
 
-function playNote(frequency, startTime, duration) {
-  if (!audioContext || !masterGain) {
-    return;
+function toggleMusic() {
+  wantsMusic = !wantsMusic;
+  if (wantsMusic) {
+    playMusic();
+  } else {
+    pauseMusic();
   }
-
-  const oscillator = audioContext.createOscillator();
-  const noteGain = audioContext.createGain();
-  oscillator.type = "sine";
-  oscillator.frequency.value = frequency;
-  noteGain.gain.setValueAtTime(0, startTime);
-  noteGain.gain.linearRampToValueAtTime(0.22, startTime + 0.03);
-  noteGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-  oscillator.connect(noteGain);
-  noteGain.connect(masterGain);
-  oscillator.start(startTime);
-  oscillator.stop(startTime + duration + 0.02);
-}
-
-function startMelody() {
-  const notes = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880, 783.99];
-  let step = 0;
-
-  const tick = () => {
-    if (!audioContext) {
-      return;
-    }
-
-    const now = audioContext.currentTime;
-    const root = notes[step % notes.length];
-    playNote(root, now, 0.72);
-    if (step % 2 === 0) {
-      playNote(root / 2, now + 0.02, 0.9);
-    }
-    step += 1;
-  };
-
-  tick();
-  melodyTimer = window.setInterval(tick, 1200);
-}
-
-function updateSoundButton() {
-  soundToggle.textContent = muted ? "播放" : "静音";
-  soundToggle.setAttribute("aria-pressed", String(muted));
-  if (masterGain) {
-    masterGain.gain.setTargetAtTime(muted ? 0 : 0.08, audioContext.currentTime, 0.03);
-  }
+  updateMusicUi();
 }
 
 function updateClues() {
@@ -117,16 +110,45 @@ function updateClues() {
   });
 
   const count = foundClues.size;
-  progressCopy.textContent =
-    count === 4
-      ? "线索已经齐了。密码就在今天。"
-      : `已经找到 ${count} / 4 个线索。`;
+  const ready = count === clueTexts.length;
+  progressCopy.textContent = ready
+    ? "线索齐了。现在把数字片排成邮戳日期。"
+    : `已经找到 ${count} / 4 个线索。线索要合起来看。`;
+
+  decoderPanel.classList.toggle("is-locked", !ready);
+  digitButtons.forEach((button) => {
+    button.disabled = !ready;
+  });
+  unlockButton.disabled = !ready;
+  undoDigit.disabled = !ready || selectedDigits.length === 0;
+  resetPuzzle.disabled = !ready || selectedDigits.length === 0;
+
+  if (ready && selectedDigits.length === 0) {
+    puzzleMessage.textContent = "四块数字片都能用了。顺序像日期，不像算式。";
+  }
+}
+
+function updateSlots() {
+  answerSlots.forEach((slot, index) => {
+    slot.textContent = selectedDigits[index] || "";
+    slot.classList.toggle("is-filled", Boolean(selectedDigits[index]));
+  });
+
+  digitButtons.forEach((button) => {
+    const digit = button.dataset.digit;
+    const usedCount = selectedDigits.filter((value) => value === digit).length;
+    const availableCount = digitButtons.filter((item) => item.dataset.digit === digit).length;
+    button.disabled = foundClues.size < clueTexts.length || usedCount >= availableCount;
+  });
+
+  undoDigit.disabled = foundClues.size < clueTexts.length || selectedDigits.length === 0;
+  resetPuzzle.disabled = foundClues.size < clueTexts.length || selectedDigits.length === 0;
 }
 
 function collectClue(button) {
   const index = Number(button.dataset.clue);
   if (foundClues.has(index)) {
-    showToast("这个线索已经收好啦。");
+    showToast("这个线索已经收好了。");
     return;
   }
 
@@ -134,61 +156,105 @@ function collectClue(button) {
   button.classList.add("is-found");
   showToast(clueTexts[index]);
   updateClues();
+  updateSlots();
+}
+
+function addDigit(button) {
+  if (foundClues.size < clueTexts.length) {
+    showToast("先把四个线索找齐，数字片才会醒。");
+    return;
+  }
+
+  if (selectedDigits.length >= 4) {
+    puzzleMessage.textContent = "四格已经满了。可以退一格或重排。";
+    return;
+  }
+
+  selectedDigits.push(button.dataset.digit);
+  puzzleMessage.textContent =
+    selectedDigits.length === 4
+      ? "邮戳已经拼好了。看看它像不像一个日期。"
+      : "继续放下一块数字片。";
+  updateSlots();
+}
+
+function clearDigits() {
+  selectedDigits.splice(0, selectedDigits.length);
+  puzzleMessage.textContent = "重新排一次。线索说：月在前，日在后。";
+  updateSlots();
+  updateClues();
+}
+
+function removeLastDigit() {
+  selectedDigits.pop();
+  puzzleMessage.textContent = "退回一格。再想想日期的写法。";
+  updateSlots();
+  updateClues();
 }
 
 function unlockFinalLetter() {
-  const value = passwordInput.value.trim();
-  if (foundClues.size < 4) {
-    puzzleMessage.textContent = "还差一点点，先把四个线索都找齐吧。";
-    showToast("周围还有小线索没有被发现。");
+  if (foundClues.size < clueTexts.length) {
+    puzzleMessage.textContent = "线索还没齐，邮戳暂时打不开。";
+    showToast("先把四个小线索都找出来。");
     return;
   }
 
-  if (value !== password) {
-    puzzleMessage.textContent = "密码好像还没对。提示：今天的月和日。";
-    passwordInput.select();
+  if (selectedDigits.length < 4) {
+    puzzleMessage.textContent = "邮戳还缺数字片。";
     return;
   }
 
-  puzzleMessage.textContent = "信已经打开。";
-  showToast("生日信打开了。");
-  setScreen(finalScreen);
-  finalScreen.scrollIntoView({ behavior: "smooth", block: "start" });
+  const attempt = selectedDigits.join("");
+  if (attempt !== password) {
+    puzzleMessage.textContent = "还没对。顺序像日期，不像算式。";
+    return;
+  }
+
+  puzzleMessage.textContent = "邮戳亮起来了，生日信打开。";
+  setScreen("final");
 }
 
-openEnvelope.addEventListener("click", () => {
-  ensureAudio();
-  setScreen(storyScreen);
-});
+function openLetter() {
+  if (openEnvelope.classList.contains("is-opening")) {
+    return;
+  }
 
-soundToggle.addEventListener("click", () => {
-  ensureAudio();
-  muted = !muted;
-  updateSoundButton();
-});
+  playMusic();
+  openEnvelope.classList.add("is-opening");
+  window.clearTimeout(openingTimer);
+  openingTimer = window.setTimeout(() => {
+    openEnvelope.classList.remove("is-opening");
+    setScreen("story");
+  }, 1050);
+}
+
+function handleBack() {
+  if (currentScreen === "final") {
+    setScreen("story");
+    return;
+  }
+  if (currentScreen === "story") {
+    setScreen("cover");
+  }
+}
+
+openEnvelope.addEventListener("click", openLetter);
+backButton.addEventListener("click", handleBack);
+musicPlayer.addEventListener("click", toggleMusic);
+backToPuzzle.addEventListener("click", () => setScreen("story"));
+backToCover.addEventListener("click", () => setScreen("cover"));
 
 clueButtons.forEach((button) => {
   button.addEventListener("click", () => collectClue(button));
 });
 
+digitButtons.forEach((button) => {
+  button.addEventListener("click", () => addDigit(button));
+});
+
+resetPuzzle.addEventListener("click", clearDigits);
+undoDigit.addEventListener("click", removeLastDigit);
 unlockButton.addEventListener("click", unlockFinalLetter);
-
-passwordInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    unlockFinalLetter();
-  }
-});
-
-passwordInput.addEventListener("input", () => {
-  passwordInput.value = passwordInput.value.replace(/\D/g, "").slice(0, 4);
-});
-
-window.addEventListener("beforeunload", () => {
-  window.clearInterval(melodyTimer);
-});
-
-updateClues();
-updateSoundButton();
 
 if (handwrittenImage) {
   handwrittenImage.addEventListener("load", () => {
@@ -201,3 +267,7 @@ if (handwrittenImage) {
   });
   handwrittenImage.src = "assets/handwritten-letter.jpg";
 }
+
+updateMusicUi();
+updateClues();
+updateSlots();

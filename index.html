@@ -13,16 +13,37 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="false">
-      静音
+    <button class="back-nav" id="backButton" type="button" hidden>返回信封</button>
+
+    <button
+      class="music-player is-playing"
+      id="musicPlayer"
+      type="button"
+      aria-pressed="false"
+      title="播放中，点击静音"
+    >
+      <span class="record-disc" aria-hidden="true">
+        <img src="assets/record-player.jpg" width="180" height="180" alt="" />
+      </span>
+      <span class="player-copy" id="playerCopy">播放中，点击静音</span>
     </button>
+    <audio id="birthdayAudio" src="assets/HappyBirthday.mp3" preload="none" loop></audio>
 
     <main class="app-shell">
       <section class="cover-screen is-active" id="coverScreen" aria-label="生日信封">
         <div class="ambient ambient-one"></div>
         <div class="ambient ambient-two"></div>
         <button class="envelope-button" id="openEnvelope" type="button">
-          <span class="envelope-frame">
+          <span class="envelope-model" aria-hidden="true">
+            <span class="envelope-paper">
+              <span>青青</span>
+              <span>生日快乐</span>
+            </span>
+            <span class="envelope-body"></span>
+            <span class="envelope-flap"></span>
+            <span class="envelope-seal"></span>
+          </span>
+          <span class="cover-art">
             <img
               src="assets/cover-envelope.jpg"
               width="1100"
@@ -33,7 +54,7 @@
             />
           </span>
           <span class="cover-title">给青青的一封生日信</span>
-          <span class="cover-hint">轻轻点开</span>
+          <span class="cover-hint">轻轻点开，信会慢慢打开</span>
         </button>
       </section>
 
@@ -58,37 +79,48 @@
                 <span></span>
               </div>
               <p class="progress-copy" id="progressCopy">
-                有 4 个小线索散在信纸旁边。
+                四个小线索藏在信纸旁。它们不会直接说答案。
               </p>
             </div>
           </aside>
 
           <section class="letter-stage">
             <div class="paper-card">
-              <p class="eyebrow">Birthday letter</p>
+              <p class="eyebrow">Birthday puzzle</p>
               <h1>青青，生日快乐</h1>
               <p>
-                今天这封信先不急着读完。它把祝福藏在几个小地方，像平时聊天里那些不经意的轻松片刻。
+                这封信把最后的邮戳密码拆散了。先找齐四个小线索，再把数字片排成一个像日期的顺序。
               </p>
               <p>
-                点一点周围的装饰，收齐线索后，就能打开最后那封正式的生日信。
+                线索都很轻，不会直接告诉答案。慢慢看，答案其实就藏在今天。
               </p>
 
-              <div class="puzzle-box" aria-label="生日密码区域">
-                <label for="passwordInput">最后的四位密码</label>
-                <div class="password-row">
-                  <input
-                    id="passwordInput"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="4"
-                    autocomplete="off"
-                    placeholder="----"
-                  />
-                  <button id="unlockButton" type="button">打开</button>
+              <div class="decoder-panel is-locked" id="decoderPanel" aria-label="邮戳解码器">
+                <div class="decoder-heading">
+                  <div>
+                    <p class="eyebrow">Postmark decoder</p>
+                    <h2>邮戳解码器</h2>
+                  </div>
+                  <button class="small-action" id="resetPuzzle" type="button">重排</button>
+                </div>
+                <div class="answer-slots" id="answerSlots" aria-label="已选择的密码">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div class="digit-tray" id="digitTray" aria-label="数字片">
+                  <button type="button" data-digit="2">2</button>
+                  <button type="button" data-digit="5">5</button>
+                  <button type="button" data-digit="0">0</button>
+                  <button type="button" data-digit="6">6</button>
+                </div>
+                <div class="decoder-actions">
+                  <button class="secondary-action" id="undoDigit" type="button">退一格</button>
+                  <button class="primary-action" id="unlockButton" type="button">打开生日信</button>
                 </div>
                 <p class="puzzle-message" id="puzzleMessage">
-                  线索会告诉你答案。它和今天有关。
+                  先找齐线索，解码器才会醒过来。
                 </p>
               </div>
             </div>
@@ -97,7 +129,7 @@
               <span>邮戳</span>
             </button>
             <button class="clue clue-star" type="button" data-clue="1">
-              <span>星星</span>
+              <span>星光</span>
             </button>
             <button class="clue clue-ribbon" type="button" data-clue="2">
               <span>丝带</span>
@@ -123,9 +155,7 @@
           <article class="final-letter">
             <p class="eyebrow">给青青</p>
             <h2>生日快乐，愿今天对你温柔一点</h2>
-            <p>
-              青青，生日快乐。
-            </p>
+            <p>青青，生日快乐。</p>
             <p>
               虽然我们只是隔着屏幕聊天的朋友，但还是想认真把今天变得特别一点。不是很夸张的惊喜，也不是很会说话的祝福，只是希望你点开它的时候，能感觉到：今天有人真诚地记得你。
             </p>
@@ -135,6 +165,10 @@
             <p>
               希望这个小网站能像一盏小灯，让你看到时心情变好。生日快乐，愿你平安开心，慢慢成为自己喜欢的样子。
             </p>
+            <div class="final-actions">
+              <button class="secondary-action" id="backToPuzzle" type="button">返回解谜</button>
+              <button class="secondary-action" id="backToCover" type="button">回到信封</button>
+            </div>
           </article>
 
           <section class="handwritten-slot">
