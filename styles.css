@@ -479,7 +479,7 @@ button:disabled {
   overflow: visible;
 }
 
-.scroll-card > :not(.scroll-art) {
+.scroll-card > :not(.scroll-art, .scroll-corner) {
   position: relative;
   z-index: 1;
 }
@@ -498,26 +498,35 @@ button:disabled {
 .scroll-corner {
   position: absolute;
   z-index: 2;
-  top: 62px;
-  right: 44px;
-  width: 54px;
-  height: 54px;
+  top: 70px;
+  right: 46px;
+  width: 48px;
+  height: 48px;
   border: 0;
-  border-radius: 6px 14px 6px 18px;
+  background: transparent;
+}
+
+.scroll-corner::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px 16px 4px 14px;
   background:
-    linear-gradient(135deg, rgba(255, 250, 241, 0.22) 0 46%, rgba(168, 121, 67, 0.28) 47% 52%, #f2d29c 53% 100%);
-  box-shadow: 0 8px 16px rgba(81, 59, 63, 0.14);
+    linear-gradient(135deg, rgba(255, 250, 241, 0.05) 0 47%, rgba(168, 121, 67, 0.30) 48% 52%, #f2d29c 53% 100%);
+  box-shadow: 0 6px 12px rgba(81, 59, 63, 0.12);
   transform: rotate(5deg);
 }
 
 .scroll-corner span {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  color: #8c6040;
-  font-size: 13px;
-  font-weight: 900;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .eyebrow {
@@ -965,6 +974,11 @@ button:disabled {
     padding: 62px 38px 52px;
   }
 
+  .scroll-corner {
+    top: 52px;
+    right: 36px;
+  }
+
   .star-clue {
     top: 86px;
     right: 22px;
@@ -1047,7 +1061,45 @@ button:disabled {
 
   .scroll-card {
     width: min(340px, 100%);
+    min-height: 386px;
+    padding: 72px 38px 54px;
+    margin-top: 46px;
     justify-self: center;
+  }
+
+  .scroll-card .eyebrow {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .scroll-card .progress-copy {
+    min-height: 42px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .scroll-card .clue-log {
+    min-height: 106px;
+    margin-top: 8px;
+  }
+
+  .scroll-card .clue-log li {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .scroll-corner {
+    top: 38px;
+    right: 34px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .scroll-corner::after {
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
   }
 
   .mascot {
@@ -1069,12 +1121,13 @@ button:disabled {
   }
 
   .gift-clue {
-    position: relative;
+    position: absolute;
     right: auto;
+    left: calc(50% + 88px);
+    top: 392px;
     bottom: auto;
-    width: 132px;
-    justify-self: center;
-    margin: 8px auto -4px;
+    width: 92px;
+    transform: translateX(-50%);
   }
 
   .decoder-heading,
